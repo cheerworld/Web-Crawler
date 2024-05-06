@@ -8,6 +8,7 @@ import com.udacity.webcrawler.json.CrawlResult;
 import com.udacity.webcrawler.json.CrawlResultWriter;
 import com.udacity.webcrawler.json.CrawlerConfiguration;
 import com.udacity.webcrawler.profiler.Profiler;
+import com.udacity.webcrawler.profiler.ProfilerImpl;
 import com.udacity.webcrawler.profiler.ProfilerModule;
 
 import javax.inject.Inject;
@@ -15,6 +16,7 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.time.Clock;
 import java.util.Objects;
 
 public final class WebCrawlerMain {
@@ -36,16 +38,8 @@ public final class WebCrawlerMain {
 
     CrawlResult result = crawler.crawl(config.getStartPages());
     CrawlResultWriter resultWriter = new CrawlResultWriter(result);
-    // TODO: Write the crawl results to a JSON file (or System.out if the file name is empty)
+    // Write the crawl results to a JSON file (or System.out if the file name is empty)
     String outputPath = config.getResultPath();
-    System.out.println(outputPath);
-    System.out.println(config.getStartPages());
-    System.out.println(config.getIgnoredUrls());
-    System.out.println(config.getIgnoredWords());
-    System.out.println(config.getImplementationOverride());
-    System.out.println(config.getMaxDepth());
-    System.out.println(config.getPopularWordCount());
-    System.out.println(config.getTimeout());
     if(!outputPath.isEmpty()) {
       resultWriter.write(Path.of(outputPath));
     } else {
@@ -53,7 +47,18 @@ public final class WebCrawlerMain {
       resultWriter.write(writer);
       writer.flush();
     }
-    // TODO: Write the profile data to a text file (or System.out if the file name is empty)
+    // Write the profile data to a text file (or System.out if the file name is empty)
+    Clock clock = Clock.systemDefaultZone();
+    String profileOutputPath = config.getProfileOutputPath();
+    Profiler profiler = new ProfilerImpl(clock);
+
+    if(!profileOutputPath.isEmpty()) {
+      profiler.writeData(Path.of(profileOutputPath));
+    } else {
+      Writer writer = new OutputStreamWriter(System.out);
+      profiler.writeData(writer);
+      writer.flush();
+    }
   }
 
   public static void main(String[] args) throws Exception {

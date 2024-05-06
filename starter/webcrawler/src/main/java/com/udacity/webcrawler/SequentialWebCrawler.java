@@ -51,7 +51,6 @@ final class SequentialWebCrawler implements WebCrawler {
     for (String url : startingUrls) {
       crawlInternal(url, deadline, maxDepth, counts, visitedUrls);
     }
-
     if (counts.isEmpty()) {
       return new CrawlResult.Builder()
           .setWordCounts(counts)
