@@ -19,6 +19,8 @@ import java.nio.file.Path;
 import java.time.Clock;
 import java.util.Objects;
 
+
+//I used Udacity GPT to help me with some sample codes and understanding the starter code and the logic.
 public final class WebCrawlerMain {
 
   private final CrawlerConfiguration config;
