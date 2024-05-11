@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -32,15 +33,16 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
     //       methods, the interceptor should record how long the method call took, using the
     //       ProfilingState methods.
     if(method.isAnnotationPresent(Profiled.class)) {
-      long startTime = clock.millis();
+      Instant startTime = clock.instant();
       try {
         Object result = method.invoke(delegate, args);
         return result;
       } catch (InvocationTargetException e) {
         throw e.getTargetException(); // Rethrow the original exception thrown by the method
+      } catch (IllegalAccessException e) {
+        throw new RuntimeException(e);
       } finally {
-        long endTime = clock.millis();
-        state.record(delegate.getClass(), method, Duration.ofMillis(endTime - startTime));
+        state.record(delegate.getClass(), method, Duration.between(startTime,clock.instant()));
       }
     } else {
       return method.invoke(delegate, args);

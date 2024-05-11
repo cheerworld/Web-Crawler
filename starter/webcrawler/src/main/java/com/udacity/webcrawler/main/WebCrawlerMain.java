@@ -50,9 +50,7 @@ public final class WebCrawlerMain {
       writer.flush();
     }
     // Write the profile data to a text file (or System.out if the file name is empty)
-    Clock clock = Clock.systemDefaultZone();
     String profileOutputPath = config.getProfileOutputPath();
-    Profiler profiler = new ProfilerImpl(clock);
 
     if(!profileOutputPath.isEmpty()) {
       profiler.writeData(Path.of(profileOutputPath));
